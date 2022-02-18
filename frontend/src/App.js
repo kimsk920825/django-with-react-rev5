@@ -1,8 +1,14 @@
-import logo from "./logo.svg";
-import "./App.scss";
+import React from "react";
+import "App.scss";
+import PostList from "PostList";
 
 function App() {
-  return <div className="App"></div>;
+  return (
+    <div>
+      Hi
+      <PostList />
+    </div>
+  );
 }
 
 export default App;

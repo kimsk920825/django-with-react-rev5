@@ -1,1 +1,4 @@
 django~=3.0.0
+djangorestframework
+pillow
+django-cors-headers
