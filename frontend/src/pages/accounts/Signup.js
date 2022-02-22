@@ -1,68 +1,94 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
-import { Alert, message } from "antd";
+import { Form, Input, Button, notification } from "antd";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { SmileOutlined, FrownOutlined } from "@ant-design/icons";
+import { renderIntoDocument } from "react-dom/test-utils";
 
 export default function Signup() {
   const history = useHistory();
-  const [inputs, setInputs] = useState({ username: "", password: "" });
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [formDisabled, setFormDisabled] = useState(true);
-  //   const [username, setUsername] = useState("");
-  //   const [password, setPassword] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
+  const onFinish = (values) => {
+    async function fn() {
+      const { username, password } = values;
+      setFieldErrors({});
+      const data = { username, password };
+      try {
+        await Axios.post("http://localhost:8000/accounts/signup/", data);
 
-  const onSubmit = (e) => {
-    e.preventDefault({});
-    setLoading(true);
-    setErrors({});
+        notification.open({
+          message: "회원가입이 완료되었습니다.",
+          description: "로그인 페이지로 이동합니다.",
+          icon: <SmileOutlined style={{ color: "#108ee9" }} />,
+        });
 
-    Axios.post("http://localhost:8000/accounts/signup/", inputs)
-      .then((response) => {
         history.push("/accounts/login");
-      })
-      .catch((error) => {
-        console.log("error: ", error);
+      } catch (error) {
         if (error.response) {
-          setErrors({
-            username: (error.response.data.username || []).join(" "),
-            password: (error.response.data.password || []).join(" "),
+          notification.open({
+            message: "회원가입이 실패했습니다.",
+            description: "아이디 암호를 확인해주세요.",
+            icon: <FrownOutlined style={{ color: "#ff3333" }} />,
           });
+          const { data: fieldsErrorMessages } = error.response;
+          // fieldsErrorMessages => {username:["m1", "m2"], password:[]}
+          //python: mydict.items()
+          setFieldErrors(
+            Object.entries(fieldsErrorMessages).reduce(
+              (acc, [fieldName, errors]) => {
+                //errors:["m1","m2"].join(" ")=> "m1" "m2"
+                acc[fieldName] = {
+                  validateStatus: "error",
+                  help: errors.join(" "),
+                };
+                errors.join(" ");
+                return acc;
+              },
+              {}
+            )
+          );
         }
-      });
+      }
+    }
+    fn();
   };
-
-  useEffect(() => {
-    console.log("changed inputs", inputs);
-  }, [inputs]);
-
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    setInputs((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  useEffect(() => {
-    const isEnabled = Object.values(inputs).every((s) => s.length > 0);
-    setFormDisabled(!isEnabled);
-  }, [inputs]);
-
   return (
-    <div>
-      <form onSubmit={onSubmit}>
-        <div>
-          <input type="text" name="username" onChange={onChange} />
-          {errors.username && <Alert type="error" message={errors.username} />}
-        </div>
-        <div>
-          <input type="password" name="password" onChange={onChange} />
-          {errors.password && <Alert type="error" message={errors.password} />}
-        </div>
+    <Form
+      name="basic"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+      // onFinishFailed={onFinishFailed}
+      autoComplete="off"
+    >
+      <Form.Item
+        label="Username"
+        name="username"
+        rules={[
+          { required: true, message: "아이디를 입력해주세요!" },
+          { min: 5, message: "5글자 이상을 입력해주세요" },
+        ]}
+        hasFeedback
+        {...fieldErrors.username}
+      >
+        <Input />
+      </Form.Item>
 
-        <input type="submit" value="회원가입" disabled={formDisabled} />
-      </form>
-    </div>
+      <Form.Item
+        label="Password"
+        name="password"
+        rules={[{ required: true, message: "비밀번호를 입력해주세요!" }]}
+        {...fieldErrors.password}
+      >
+        <Input.Password />
+      </Form.Item>
+
+      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+      </Form.Item>
+    </Form>
   );
 }
