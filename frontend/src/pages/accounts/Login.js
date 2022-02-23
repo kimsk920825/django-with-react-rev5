@@ -4,13 +4,15 @@ import { Card, Form, Input, Button, notification } from "antd";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 import { SmileOutlined, FrownOutlined } from "@ant-design/icons";
 import { renderIntoDocument } from "react-dom/test-utils";
-import useLocalStorage from "utils/useLocalStorage";
+import { useAppContext } from "store";
+import { setToken } from "store";
 
 export default function Login() {
+  const { dispatch } = useAppContext();
   const history = useHistory();
-  const [jwtToken, setJwtToken] = useLocalStorage("jwtToken", "");
+
   const [fieldErrors, setFieldErrors] = useState({});
-  console.log("loaded jwtToken :", jwtToken);
+
   const onFinish = (values) => {
     async function fn() {
       const { username, password } = values;
@@ -24,7 +26,9 @@ export default function Login() {
         const {
           data: { token: jwtToken },
         } = response;
-        setJwtToken(jwtToken);
+
+        dispatch(setToken(jwtToken));
+
         notification.open({
           message: "로그인이 완료되었습니다.",
           //description: "로그인 페이지로 이동합니다.",
