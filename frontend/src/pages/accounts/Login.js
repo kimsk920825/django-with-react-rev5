@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import Axios from "axios";
 import { Card, Form, Input, Button, notification } from "antd";
-import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import {
+  useHistory,
+  useLocation,
+} from "react-router-dom/cjs/react-router-dom.min";
 import { SmileOutlined, FrownOutlined } from "@ant-design/icons";
 import { renderIntoDocument } from "react-dom/test-utils";
 import { useAppContext } from "store";
@@ -9,9 +12,14 @@ import { setToken } from "store";
 
 export default function Login() {
   const { dispatch } = useAppContext();
+  const location = useLocation();
   const history = useHistory();
 
   const [fieldErrors, setFieldErrors] = useState({});
+
+  const { from: loginRedirectUrl } = location.state || {
+    from: { pathname: "/" },
+  };
 
   const onFinish = (values) => {
     async function fn() {
@@ -35,7 +43,7 @@ export default function Login() {
           icon: <SmileOutlined style={{ color: "#108ee9" }} />,
         });
 
-        // history.push("/accounts/login"); //TODO:이동 주소
+        history.push(loginRedirectUrl);
       } catch (error) {
         if (error.response) {
           notification.open({
