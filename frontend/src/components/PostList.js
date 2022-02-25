@@ -3,6 +3,7 @@ import Axios from "axios";
 import Post from "./Post";
 import { useAppContext } from "store";
 import { Alert } from "antd";
+
 const apiUrl = "http://127.0.0.1:8000/api/posts/";
 
 //처음 PostList 컴포넌트가 만들어질 떄 API를 호출하고 싶다.
