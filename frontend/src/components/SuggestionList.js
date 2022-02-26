@@ -13,7 +13,7 @@ export default function SuggestionList({ style }) {
   useEffect(() => {
     async function fetchUserList() {
       const apiUrl = "http://localhost:8000/accounts/suggestions/";
-      const headers = { Authroization: `JWT ${jwtToken}` };
+      const headers = { Authorization: `JWT ${jwtToken}` };
       try {
         const { data } = await Axios.get(apiUrl, { headers });
         setUserList(data);
