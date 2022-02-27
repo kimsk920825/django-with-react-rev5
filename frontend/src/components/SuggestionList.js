@@ -18,7 +18,7 @@ export default function SuggestionList({ style }) {
         const { data } = await Axios.get(apiUrl, { headers });
         setUserList(data);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
     fetchUserList();
@@ -27,7 +27,10 @@ export default function SuggestionList({ style }) {
     <div style={style}>
       <Card title="Suggestion for you" size="small">
         {userList.map((suggestionUser) => (
-          <Suggestion suggestionUser={suggestionUser} />
+          <Suggestion
+            key={suggestionUser.name}
+            suggestionUser={suggestionUser}
+          />
         ))}
       </Card>
     </div>
