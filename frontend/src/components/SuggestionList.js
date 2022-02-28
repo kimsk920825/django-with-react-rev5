@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Card } from "antd";
 import Suggestion from "./Suggestion";
 import "./SuggestionList.scss";
+import Axios from "axios";
 import useAxios from "axios-hooks";
 import { useAppContext } from "store";
 
@@ -24,11 +25,21 @@ export default function SuggestionList({ style }) {
   }, [origUserList]);
 
   const onFollowUser = (username) => {
-    setUserList((prevUserList) => {
-      return prevUserList.map((user) => {
-        return user.username !== username ? user : { ...user, is_follow: true };
+    const data = { username };
+    const config = { headers };
+    Axios.post("http://localhost:8000/accounts/follow/", data, config)
+      .then((response) => {
+        setUserList((prevUserList) => {
+          return prevUserList.map((user) => {
+            return user.username !== username
+              ? user
+              : { ...user, is_follow: true };
+          });
+        });
+      })
+      .catch((error) => {
+        console.error(error);
       });
-    });
   };
 
   return (
