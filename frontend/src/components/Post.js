@@ -1,15 +1,17 @@
 import React from "react";
-import { Avatar, Card } from "antd";
+import { Avatar, Card, Comment, Tooltip } from "antd";
 import {
   HeartTwoTone,
   HeartOutlined,
   HeartFilled,
   UserOutlined,
 } from "@ant-design/icons";
+import CommentList from "./CommentList";
 
 function Post({ post, handleLike }) {
   const { author, caption, location, photo, tag_set, is_like } = post;
   const { username, name, avatar_url } = author;
+
   return (
     <div>
       <Card
@@ -40,10 +42,12 @@ function Post({ post, handleLike }) {
           }
           title={location}
           description={caption}
+          style={{ marginBottom: "0.5em" }}
         />
+        <CommentList post={post} />
       </Card>
       {/* <img src={photo} alt={caption} style={{ width: "100px" }} /> */}
-      {caption},{location}
+      {/* {caption},{location} */}
     </div>
   );
 }
