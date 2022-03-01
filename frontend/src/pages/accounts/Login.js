@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Axios from "axios";
+import { axiosInstance } from "api";
 import { Card, Form, Input, Button, notification } from "antd";
 import {
   useHistory,
@@ -28,10 +28,7 @@ export default function Login() {
       setFieldErrors({});
       const data = { username, password };
       try {
-        const response = await Axios.post(
-          "http://localhost:8000/accounts/token/",
-          data
-        );
+        const response = await axiosInstance.post("/accounts/token/", data);
         const {
           data: { token: jwtToken },
         } = response;

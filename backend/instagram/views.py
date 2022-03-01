@@ -25,13 +25,13 @@ class PostViewSet(ModelViewSet):
         return context
 
     def get_queryset(self):
-        #timesince = timezone.now() - timedelta(days=3)
+        # timesince = timezone.now() - timedelta(days=3)
         qs = super().get_queryset()
         qs = qs.filter(
             Q(author=self.request.user) |
             Q(author__in=self.request.user.following_set.all())
         )
-        #qs = qs.filter(created_at__gte=timesince)
+        # qs = qs.filter(created_at__gte=timesince)
         return qs
 
     def perform_create(self, serializer):
@@ -54,6 +54,11 @@ class PostViewSet(ModelViewSet):
 class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
 
     def get_queryset(self):
         qs = super().get_queryset()

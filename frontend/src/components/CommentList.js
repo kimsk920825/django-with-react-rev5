@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import { Input, Button } from "antd";
-import useAxios from "axios-hooks";
-import Axios from "axios";
+import { axiosInstance, useAxios } from "api";
 import Comment from "./Comment";
-
 import { useAppContext } from "store";
 
 export default function CommentList({ post }) {
@@ -16,15 +14,15 @@ export default function CommentList({ post }) {
   const headers = { Authorization: `JWT ${jwtToken}` };
 
   const [{ data: commentList, loading, error }, refetch] = useAxios({
-    url: `http://localhost:8000/api/posts/${post.id}/comments`,
+    url: `/api/posts/${post.id}/comments`,
     headers,
   });
 
   const handleCommentSave = async () => {
-    const apiUrl = `http://localhost:8000/api/posts/${post.id}/comments/`;
+    const apiUrl = `/api/posts/${post.id}/comments/`;
     console.group("handleCommentSave");
     try {
-      const response = await Axios.post(
+      const response = await axiosInstance.post(
         apiUrl,
         { message: commentContent },
         { headers }
