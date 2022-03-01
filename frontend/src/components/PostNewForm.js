@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Form, Input, Modal, Upload, notification } from "antd";
 import { PlusOutlined, FrownOutlined } from "@ant-design/icons";
 import { getBase64FromFile } from "utils/base64";
-import { Axios } from "axios";
+import Axios from "axios";
 import { useAppContext } from "store";
 import { parseErrorMessages } from "utils/forms";
 import { useHistory } from "react-router-dom";
